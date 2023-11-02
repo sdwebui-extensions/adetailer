@@ -46,20 +46,16 @@ def scan_model_dir(path_: str | Path) -> list[Path]:
 def get_models(
     model_dir: str | Path, extra_dir: str | Path = "", huggingface: bool = True
 ) -> OrderedDict[str, str | None]:
-    model_paths = [*scan_model_dir(model_dir), *scan_model_dir(extra_dir)]
     if os.path.exists('/stable-diffusion-cache/models/adetailer'):
         for model_name in os.listdir('/stable-diffusion-cache/models/adetailer'):
             os.system(f'cp /stable-diffusion-cache/models/adetailer/{model_name} {model_dir}/{model_name}')
-            model_paths.append(f'{model_dir}/{model_name}')
+    model_paths = [*scan_model_dir(model_dir), *scan_model_dir(extra_dir)]
 
     models = OrderedDict()
     if huggingface:
         for model_name in ['face_yolov8n.pt', 'face_yolov8s.pt', 'hand_yolov8n.pt', 'person_yolov8n-seg.pt', 'person_yolov8s-seg.pt']:
             if os.path.exists(os.path.join(model_dir, model_name)):
                 continue
-            elif os.path.exists(os.path.join('/stable-diffusion-cache/models/adetailer', model_name)):
-                os.system(f'cp /stable-diffusion-cache/models/adetailer/{model_name} {model_dir}/{model_name}')
-                model_paths.append(f'{model_dir}/{model_name}')
             else:
                 models.update({model_name: hf_download(model_name)})
     models.update(
