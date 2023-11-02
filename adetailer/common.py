@@ -8,6 +8,7 @@ from typing import Optional, Union
 from huggingface_hub import hf_hub_download
 from PIL import Image, ImageDraw
 from rich import print
+import os
 
 repo_id = "Bingsu/adetailer"
 _download_failed = False
@@ -46,18 +47,21 @@ def get_models(
     model_dir: str | Path, extra_dir: str | Path = "", huggingface: bool = True
 ) -> OrderedDict[str, str | None]:
     model_paths = [*scan_model_dir(model_dir), *scan_model_dir(extra_dir)]
+    if os.path.exists('/stable-diffusion-cache/models/adetailer'):
+        for model_name in os.listdir('/stable-diffusion-cache/models/adetailer'):
+            os.system(f'cp /stable-diffusion-cache/models/adetailer/{model_name} {model_dir}/{model_name}')
+            model_paths.append(f'{model_dir}/{model_name}')
 
     models = OrderedDict()
     if huggingface:
-        models.update(
-            {
-                "face_yolov8n.pt": hf_download("face_yolov8n.pt"),
-                "face_yolov8s.pt": hf_download("face_yolov8s.pt"),
-                "hand_yolov8n.pt": hf_download("hand_yolov8n.pt"),
-                "person_yolov8n-seg.pt": hf_download("person_yolov8n-seg.pt"),
-                "person_yolov8s-seg.pt": hf_download("person_yolov8s-seg.pt"),
-            }
-        )
+        for model_name in ['face_yolov8n.pt', 'face_yolov8s.pt', 'hand_yolov8n.pt', 'person_yolov8n-seg.pt', 'person_yolov8s-seg.pt']:
+            if os.path.exists(os.path.join(model_dir, model_name)):
+                continue
+            elif os.path.exists(os.path.join('/stable-diffusion-cache/models/adetailer', model_name)):
+                os.system(f'cp /stable-diffusion-cache/models/adetailer/{model_name} {model_dir}/{model_name}')
+                model_paths.append(f'{model_dir}/{model_name}')
+            else:
+                models.update({model_name: hf_download(model_name)})
     models.update(
         {
             "mediapipe_face_full": None,
