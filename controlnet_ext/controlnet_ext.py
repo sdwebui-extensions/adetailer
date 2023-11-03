@@ -149,8 +149,7 @@ def _get_cn_models() -> list[str]:
 
     models = []
     for p in model_paths:
-        model_hash = sd_models.model_hash(p)
-        name = f"{p.stem} [{model_hash}]"
+        name = f"{p.stem}"
         models.append(name)
     return models
 
