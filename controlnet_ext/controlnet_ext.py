@@ -10,6 +10,7 @@ from modules import extensions, sd_models, shared
 
 try:
     from modules.paths import extensions_builtin_dir, extensions_dir, models_path
+    from modules.common_paths import list_cn_paths
 except ImportError as e:
     msg = """
     [-] ADetailer: `stable-diffusion-webui < 1.1.0` is no longer supported.
@@ -112,6 +113,8 @@ def get_cn_model_dirs() -> list[Path]:
     dirs += [
         Path(ext_dir) for ext_dir in [cn_model_dir_old, ext_dir1, ext_dir2] if ext_dir
     ]
+    for dir in list_cn_paths([]):
+        dirs.append(Path(dir))
 
     return dirs
 
