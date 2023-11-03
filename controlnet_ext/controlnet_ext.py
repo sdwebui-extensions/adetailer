@@ -151,7 +151,7 @@ def _get_cn_models() -> list[str]:
     for p in model_paths:
         name = f"{p.stem}"
         models.append(name)
-    return models
+    return list(set(models))
 
 
 def get_cn_models() -> list[str]:
