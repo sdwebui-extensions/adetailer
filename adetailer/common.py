@@ -50,7 +50,7 @@ def get_models(
     if os.path.exists('/stable-diffusion-cache/models/adetailer'):
         for model_name in os.listdir('/stable-diffusion-cache/models/adetailer'):
             os.system(f'cp /stable-diffusion-cache/models/adetailer/{model_name} {model_dir}/{model_name}')
-            model_paths.append(f'{model_dir}/{model_name}')
+            model_paths.append(Path(f'{model_dir}/{model_name}'))
 
     models = OrderedDict()
     if huggingface:
@@ -59,7 +59,7 @@ def get_models(
                 continue
             elif os.path.exists(os.path.join('/stable-diffusion-cache/models/adetailer', model_name)):
                 os.system(f'cp /stable-diffusion-cache/models/adetailer/{model_name} {model_dir}/{model_name}')
-                model_paths.append(f'{model_dir}/{model_name}')
+                model_paths.append(Path(f'{model_dir}/{model_name}'))
             else:
                 models.update({model_name: hf_download(model_name)})
     models.update(
