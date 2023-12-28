@@ -6,6 +6,7 @@ import sys
 from functools import lru_cache
 from pathlib import Path
 from textwrap import dedent
+import os
 
 from modules import extensions, sd_models, shared
 
@@ -115,10 +116,13 @@ def get_cn_model_dirs() -> list[Path]:
         cn_model_dir_old = None
     ext_dir1 = shared.opts.data.get("control_net_models_path", "")
     ext_dir2 = getattr(shared.cmd_opts, "controlnet_dir", "")
+    ext_dir3 = None
+    if shared.cmd_opts.just_ui:
+        ext_dir3 = Path(f"{os.path.join(os.path.dirname(shared.cmd_opts.data_dir), 'models/ControlNet')}")
 
     dirs = [cn_model_dir]
     dirs += [
-        Path(ext_dir) for ext_dir in [cn_model_dir_old, ext_dir1, ext_dir2] if ext_dir
+        Path(ext_dir) for ext_dir in [cn_model_dir_old, ext_dir1, ext_dir2, ext_dir3] if ext_dir
     ]
 
     return dirs
