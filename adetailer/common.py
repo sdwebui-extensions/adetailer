@@ -46,10 +46,12 @@ def scan_model_dir(path_: str | Path) -> list[Path]:
 def get_models(
     model_dir: str | Path, extra_dir: str | Path = "", huggingface: bool = True
 ) -> OrderedDict[str, str | None]:
+    from modules import shared
     model_paths = [*scan_model_dir(model_dir), *scan_model_dir(extra_dir)]
     if os.path.exists('/stable-diffusion-cache/models/adetailer'):
         for model_name in os.listdir('/stable-diffusion-cache/models/adetailer'):
-            os.system(f'cp /stable-diffusion-cache/models/adetailer/{model_name} {model_dir}/{model_name}')
+            if not shared.cmd_opts.just_ui:
+                os.system(f'cp /stable-diffusion-cache/models/adetailer/{model_name} {model_dir}/{model_name}')
             model_paths.append(Path(f'{model_dir}/{model_name}'))
 
     models = OrderedDict()
@@ -58,7 +60,8 @@ def get_models(
             if os.path.exists(os.path.join(model_dir, model_name)):
                 continue
             elif os.path.exists(os.path.join('/stable-diffusion-cache/models/adetailer', model_name)):
-                os.system(f'cp /stable-diffusion-cache/models/adetailer/{model_name} {model_dir}/{model_name}')
+                if not shared.cmd_opts.just_ui:
+                    os.system(f'cp /stable-diffusion-cache/models/adetailer/{model_name} {model_dir}/{model_name}')
                 model_paths.append(Path(f'{model_dir}/{model_name}'))
             else:
                 models.update({model_name: hf_download(model_name)})
